@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI学生心理状态分析系统 - 演示界面</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+      /* --- CSS 样式 - 全面重构 --- */
+      :root {
+        --primary-color: #6a63f5;
+        --primary-light: #f0f0ff;
+        --secondary-color: #f3f4f6;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --background-color: #ffffff;
+        --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --border-radius-lg: 16px;
+        --border-radius-md: 8px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--secondary-color);
+        margin: 0;
+        padding: 1rem;
+        min-height: 100vh;
+        color: var(--text-dark);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .main-container {
+        width: 100%;
+        min-height: calc(100vh - 2rem);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr auto;
+        gap: 1rem;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+
+      .form-section,
+      .explanation-section {
+        background-color: var(--background-color);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--card-shadow);
+        padding: 1.5rem;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(45deg, var(--primary-color), #8a5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      header p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+
+      .form-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: var(--border-radius-md);
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(106, 99, 245, 0.2);
+      }
+
+      .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 0.8rem;
+        height: 280px;
+        overflow-y: auto;
+        border: 1px solid #e5e7eb;
+        padding: 1rem;
+        border-radius: var(--border-radius-md);
+        background-color: var(--secondary-color);
+      }
+
+      .image-gallery::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .image-gallery::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .image-gallery::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+      }
+
+      .image-gallery::-webkit-scrollbar-thumb:hover {
+        background: #5a52e8;
+      }
+
+      .img-container {
+        position: relative;
+        cursor: pointer;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 3px solid transparent;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .img-container:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .img-container.selected {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px var(--primary-light);
+        transform: scale(1.05);
+      }
+
+      .img-container.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: var(--primary-color);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background-image: linear-gradient(45deg, #8a5cf6, var(--primary-color));
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-md);
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 2rem;
+        transition: all 0.2s ease-in-out;
+        position: relative;
+        box-shadow: 0 4px 15px rgba(106, 99, 245, 0.3);
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 7px 20px rgba(106, 99, 245, 0.4);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .submit-btn.loading::after {
+        content: "";
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 50%;
+        left: 50%;
+        margin-top: -12px;
+        margin-left: -12px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .message {
+        margin-top: 1rem;
+        text-align: center;
+        padding: 0.75rem;
+        border-radius: var(--border-radius-md);
+        display: none;
+      }
+      .message.success {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+      .message.error {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .explanation-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--primary-light);
+        padding-bottom: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .explanation-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+      }
+
+      .explanation-content::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .explanation-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .explanation-content::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+      }
+
+      .explanation-content::-webkit-scrollbar-thumb:hover {
+        background: #5a52e8;
+      }
+
+      .highlights-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .highlight-card {
+        background-color: var(--secondary-color);
+        padding: 1.2rem;
+        border-radius: var(--border-radius-md);
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .highlight-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow);
+        border-color: var(--primary-light);
+      }
+
+      .highlight-card svg {
+        width: 28px;
+        height: 28px;
+        color: var(--primary-color);
+        margin-bottom: 0.8rem;
+      }
+
+      .highlight-card h3 {
+        margin: 0 0 0.4rem 0;
+        font-size: 1rem;
+      }
+
+      .highlight-card p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+
+      .system-significance {
+        background-color: var(--primary-light);
+        border-radius: var(--border-radius-md);
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .system-significance h3 {
+        margin: 0 0 0.8rem 0;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+
+      .pain-points {
+        margin-bottom: 1rem;
+      }
+
+      .pain-points h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-dark);
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .pain-points ul {
+        margin: 0;
+        padding-left: 1.2rem;
+        color: var(--text-light);
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+
+      .pain-points li {
+        margin-bottom: 0.2rem;
+      }
+
+      .solution-value {
+        margin-top: 1rem;
+      }
+
+      .solution-value h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-dark);
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .solution-value p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+
+      .demo-notice-card {
+        background-color: #f8fafc;
+        border: 1px solid var(--primary-color);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .demo-notice-card h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .demo-notice-card p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.8rem;
+        line-height: 1.3;
+      }
+
+      .flowchart-section {
+        grid-column: 1 / -1;
+        background-color: var(--background-color);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--card-shadow);
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .flowchart-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+        text-align: center;
+        border-bottom: 2px solid var(--primary-light);
+        padding-bottom: 0.5rem;
+      }
+
+      .flowchart-container {
+        width: 100%;
+        height: 400px;
+        background-color: var(--secondary-color);
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      .flowchart-container .mermaid {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .flowchart-container svg {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        max-height: none !important;
+      }
+
+      @media (max-width: 992px) {
+        .main-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto auto;
+          height: auto;
+          min-height: calc(100vh - 2rem);
+        }
+
+        .form-section,
+        .explanation-section {
+          height: auto;
+          overflow-y: visible;
+        }
+
+        .explanation-content {
+          overflow-y: visible;
+        }
+
+        .highlights-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .flowchart-container {
+          height: 300px;
+        }
+
+        .flowchart-container svg {
+          width: 95% !important;
+          height: 95% !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="form-section">
+        <header>
+          <h1>AI学生心理状态分析系统</h1>
+          <p>
+            请填入您的邮箱，并从下方图库中选择一张图片，系统将模拟识别该学生的状态并执行个性化干预。
+          </p>
+        </header>
+        <main class="form-content">
+          <form id="analysis-form">
+            <div class="form-group">
+              <label for="email">接收结果的邮箱</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="例如：teacher@example.com"
+                required
+              />
+            </div>
+            <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
+              <label>选择分析图片</label>
+              <div class="image-gallery" id="image-gallery"></div>
+            </div>
+            <button type="submit" class="submit-btn" id="submit-btn">
+              开始分析
+            </button>
+          </form>
+          <div id="message-box" class="message"></div>
+          
+          <div class="demo-notice-card">
+            <h4>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4"/>
+                <path d="M12 8h.01"/>
+              </svg>
+              演示系统说明
+            </h4>
+            <p>
+              本系统为技术概念验证原型，旨在展示AI在学生心理健康领域的应用潜力。实际部署需要考虑数据隐私、伦理审查、专业心理学指导等因素。演示使用的是公开的面部表情识别数据集，不涉及真实学生信息。
+            </p>
+          </div>
+        </main>
+      </div>
+
+      <div class="explanation-section">
+        <h2>系统原理与亮点</h2>
+        
+        <div class="explanation-content">
+          <div class="system-significance">
+            <h3>
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              解决的核心痛点
+            </h3>
+            <div class="pain-points">
+              <h4>传统学生心理健康管理面临的挑战：</h4>
+              <ul>
+                <li>心理问题识别滞后，往往在严重后果发生后才被发现</li>
+                <li>人工筛查效率低下，无法覆盖大规模学生群体</li>
+                <li>干预措施单一刻板，缺乏个性化和趣味性</li>
+                <li>师生比例失衡，心理健康资源严重不足</li>
+                <li>学生主动求助意愿低，存在心理健康污名化问题</li>
+              </ul>
+            </div>
+            <div class="solution-value">
+              <h4>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                  <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                  <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                  <path d="M12 21c0-1-1-3-3-3s-3 2-3 3 1 3 3 3 3-2 3-3"/>
+                </svg>
+                系统价值与意义：
+              </h4>
+              <p>通过AI技术实现大规模、实时、个性化的学生心理健康监测与干预，将被动应对转变为主动预防，有效降低校园心理危机事件发生率，提升整体教育质量和学生幸福感。</p>
+            </div>
+          </div>
+
+          <div class="highlights-grid">
+            <div class="highlight-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+              </svg>
+              <h3>智能识别引擎</h3>
+              <p>
+                突破传统人工筛查局限，通过AI视觉分析实现毫秒级情绪识别，将心理健康监测从"事后发现"转变为"实时预警"。
+              </p>
+            </div>
+            <div class="highlight-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <h3>分级响应机制</h3>
+              <p>
+                解决"一刀切"干预问题，根据风险等级智能匹配干预策略，从轻度的游戏化疏导到重度的人工介入，确保资源精准投放。
+              </p>
+            </div>
+            <div class="highlight-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+              <h3>创新疏导体验</h3>
+              <p>
+                摒弃传统说教模式，通过AI生成个性化游戏任务和创意内容，将心理疏导包装为有趣体验，显著提升学生接受度和参与度。
+              </p>
+            </div>
+            <div class="highlight-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <h3>规模化解决方案</h3>
+              <p>
+                破解师生比例失衡难题，通过AI自动化处理常规情况，将有限的人力资源精准投放到高风险学生，实现心理健康服务的规模化覆盖。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flowchart-section">
+        <h2>系统架构流程图</h2>
+        <div class="flowchart-container">
+          <div class="mermaid" id="flowchart-diagram">
+            %%{init: {'flowchart': {'nodeSpacing': 50, 'rankSpacing': 80, 'curve': 'basis'}, 'themeVariables': {'primaryColor': '#6a63f5', 'primaryTextColor': '#1f2937', 'fontFamily': 'Poppins', 'fontSize': '14px'}}}%%
+            flowchart LR
+                %% 数据预处理部分
+                A["学生照片库<br/>Student Photo Database"] --> B["AI向量化<br/>Jina CLIP-v1"] --> C["向量数据库<br/>Google Sheet"]
+                
+                %% 主流程
+                D["用户上传照片<br/>Form Trigger"] --> E["人脸识别<br/>余弦相似度计算"] --> F["匹配学生档案<br/>获取学生信息"] --> G["AI情绪评估<br/>Gemini-2.5-Flash"] --> H["焦虑等级输出<br/>轻度1/中度2/重度3"] --> I{"智能分级干预<br/>Switch Router"}
+                
+                %% 三级干预路径
+                I -->|"轻度焦虑"| J["个性化文字邮件<br/>基于学生档案生成"]
+                I -->|"中度焦虑"| K["AI游戏任务生成<br/>Creative Director AI"] --> L["AI绘画生成<br/>FLUX-1.1-Pro"] --> M["图文并茂邮件<br/>游戏任务卡片"]
+                I -->|"重度焦虑"| N["紧急告警邮件<br/>通知负责老师"]
+                
+                %% 反馈收集
+                J --> O["用户反馈收集<br/>5星评价按钮"]
+                M --> O
+                O --> P["数据统计分析<br/>Google Sheets"] --> Q["感谢页面展示"]
+                
+                %% 连接线
+                C --> E
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 初始化Mermaid
+      mermaid.initialize({ 
+        startOnLoad: true,
+        theme: 'default',
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true,
+          curve: 'basis'
+        },
+        themeVariables: {
+          fontSize: '16px',
+          fontFamily: 'Poppins, sans-serif'
+        }
+      });
+
+      // 确保流程图正确渲染后调整大小
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+          const flowchartSvg = document.querySelector('.flowchart-container svg');
+          if (flowchartSvg) {
+            flowchartSvg.style.width = '100%';
+            flowchartSvg.style.height = '100%';
+            flowchartSvg.style.maxWidth = 'none';
+            flowchartSvg.style.maxHeight = 'none';
+            flowchartSvg.setAttribute('viewBox', flowchartSvg.getAttribute('viewBox'));
+            flowchartSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          }
+        }, 1000);
+      });
+
+      const n8nWebhookUrl = "https://n8n.gwy.life/webhook-test/6f8d621d-02a6-4c7a-9e37-2b17d65f53fd";
+
+      const imageData = [
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_14325168.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_14444117.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_14596578.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_15855670.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_22908984.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_24550940.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_25146065.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_30620747.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_31554607.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_33363783.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_41252401.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_42117104.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_42247290.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_43108598.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_43530807.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_47230287.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_47664873.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_48166716.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_48929571.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/angry_PrivateTest_51551462.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/happy_PrivateTest_30199869.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/happy_PrivateTest_30360811.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/happy_PrivateTest_30557630.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/happy_PrivateTest_32306940.jpg",
+        "https://raw.githubusercontent.com/tianins/FER-images/main/happy_PrivateTest_32394750.jpg",
+      ];
+
+      // --- 以下的JavaScript逻辑与之前版本完全相同 ---
+      const gallery = document.getElementById("image-gallery");
+      const form = document.getElementById("analysis-form");
+      const submitBtn = document.getElementById("submit-btn");
+      const messageBox = document.getElementById("message-box");
+      let selectedImageUrl = null;
+
+      function renderImageGallery() {
+        imageData.forEach((url) => {
+          const imgContainer = document.createElement("div");
+          imgContainer.className = "img-container";
+          imgContainer.dataset.url = url;
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "学生照片";
+          img.loading = "lazy";
+          imgContainer.appendChild(img);
+          gallery.appendChild(imgContainer);
+        });
+      }
+
+      gallery.addEventListener("click", (event) => {
+        const clickedContainer = event.target.closest(".img-container");
+        if (!clickedContainer) return;
+        document.querySelectorAll(".img-container.selected").forEach((el) => {
+          el.classList.remove("selected");
+        });
+        clickedContainer.classList.add("selected");
+        selectedImageUrl = clickedContainer.dataset.url;
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        if (!email || !selectedImageUrl) {
+          alert("请输入邮箱并选择一张图片！");
+          return;
+        }
+        submitBtn.classList.add("loading");
+        submitBtn.disabled = true;
+        messageBox.style.display = "none";
+
+        const dataToSend = { email: email, imageUrl: selectedImageUrl };
+
+        try {
+          const response = await fetch(n8nWebhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dataToSend),
+          });
+          if (!response.ok) throw new Error(`服务器错误: ${response.status}`);
+
+          messageBox.className = "message success";
+          messageBox.textContent = "分析请求已成功发送！请稍后检查您的邮箱。";
+          messageBox.style.display = "block";
+        } catch (error) {
+          messageBox.className = "message error";
+          messageBox.textContent = `请求失败: ${error.message}`;
+          messageBox.style.display = "block";
+        } finally {
+          submitBtn.classList.remove("loading");
+          submitBtn.disabled = false;
+        }
+      });
+
+      renderImageGallery();
+    </script>
+  </body>
+</html>
