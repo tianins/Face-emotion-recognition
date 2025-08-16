@@ -630,7 +630,7 @@
                 A["学生照片库<br/>Student Photo Database"] --> B["AI向量化<br/>Jina CLIP-v1"] --> C["向量数据库<br/>Google Sheet"]
                 
                 %% 主流程
-                D["用户上传照片<br/>Form Trigger"] --> E["人脸识别<br/>余弦相似度计算"] --> F["匹配学生档案<br/>获取学生信息"] --> G["AI情绪评估<br/>Gemini-2.5-Flash"] --> H["焦虑等级输出<br/>轻度1/中度2/重度3"] --> I{"智能分级干预<br/>Switch Router"}
+                D["用户上传照片<br/>Form Trigger"] --> E["人脸识别<br/>余弦相似度计算"] --> F["匹配学生档案<br/>获取学生信息"] --> G["AI情绪评估<br/>Gemini-2.5-Flash"] --> H["RMSSD分级<br/>轻度1/中度2/重度3"] --> I{"智能分级干预<br/>Switch Router"}
                 
                 %% 三级干预路径
                 I -->|"轻度焦虑"| J["个性化文字邮件<br/>基于学生档案生成"]
